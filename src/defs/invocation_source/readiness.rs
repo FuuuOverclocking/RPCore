@@ -14,3 +14,11 @@ pub trait ReactorRegistry {
     fn modify(&mut self, source: Self::Source, settings: Self::Settings) -> Result<(), Self::Err>;
     fn remove(&mut self, source: Self::Source) -> Result<(), Self::Err>;
 }
+
+pub trait EventSource<Reactor> {
+    type Token;
+    type Err;
+
+    fn register(&mut self, registry: &mut Reactor, token: Self::Token) -> Result<(), Self::Err>;
+    fn deregister(&mut self, registry: &mut Reactor, token: Self::Token) -> Result<(), Self::Err>;
+}

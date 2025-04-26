@@ -1,10 +1,9 @@
-pub trait CompletionBased<R: Ring> {
-    fn submit(&mut self, token: R::Token, sq: &R::Submitter);
-    fn on_complete(&mut self, entry: R::CompletionEntry);
-}
+pub trait Proactor<Submitter, SQ, CQE, Token> {
+    type InitErr;
+    type SubmitErr;
+    type OnCompleteErr;
 
-pub trait Ring {
-    type Submitter;
-    type Token;
-    type CompletionEntry;
+    fn init(&mut self, submitter: &Submitter) -> Result<(), Self::InitErr>;
+    fn submit(&mut self, sq: &mut SQ, token: Token) -> Result<(), Self::SubmitErr>;
+    fn on_complete(&mut self, entry: CQE) -> Result<(), Self::OnCompleteErr>;
 }

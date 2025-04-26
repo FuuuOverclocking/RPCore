@@ -5,6 +5,12 @@ pub use handler_builder::HandlerBuilder;
 
 pub mod invocation_source;
 
+#[derive(Debug)]
+pub struct Invocation<Arg, Cb> {
+    pub arg: Arg,
+    pub callback: Cb,
+}
+
 pub trait Handler<Arg> {
     type Ret;
 
@@ -24,8 +30,6 @@ pub trait TryHandler<Arg>: Handler<Arg, Ret = Result<Self::Ok, Self::Err>> {
 
 pub trait TryCallback<T, E>: Callback<Result<T, E>> {}
 
-/***** 让这些 trait 彼此等价 *****/
-
 impl<H, Arg, Ok, Err> TryHandler<Arg> for H
 where
     H: Handler<Arg, Ret = Result<Ok, Err>>,
@@ -39,8 +43,6 @@ where
 }
 
 impl<Cb, Ok, Err> TryCallback<Ok, Err> for Cb where Cb: Callback<Result<Ok, Err>> {}
-
-/***** Callback = FnOnce(T) + Send + 'static *****/
 
 impl<T, F> Callback<T> for F
 where

@@ -1,22 +1,24 @@
-use super::Invocation;
-use crate::defs::Callback;
+use crate::defs::{Callback, Invocation};
 
 pub trait RecvInvocation<Arg, Ret, Cb>
 where
     Cb: Callback<Ret>,
 {
-    type Err;
+    type RecvErr: Error;
 
-    fn recv(&mut self) -> Result<Invocation<Arg, Cb>, Self::Err>;
+    fn recv(&mut self) -> Result<Invocation<Arg, Cb>, Self::RecvErr>;
 }
 
 pub trait TryRecvInvocation<Arg, Ret, Cb>
 where
     Cb: Callback<Ret>,
 {
-    type Err;
+    type TryRecvErr: Error;
 
-    fn try_recv(&mut self) -> Result<Invocation<Arg, Cb>, Self::Err>;
+    fn try_recv(&mut self) -> Result<Invocation<Arg, Cb>, Self::TryRecvErr>;
 }
 
-// TODO: 是否提供 trait 判断 Err::Empty?
+pub trait Error {
+    fn is_closed(&self) -> bool;
+    fn is_empty(&self) -> bool;
+}

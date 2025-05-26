@@ -1,7 +1,7 @@
 use std::sync::{Arc, Condvar, Mutex};
 
 use crate::defs::layer::Layer;
-use crate::defs::{Callback, Handler};
+use crate::defs::{callback_fn, Callback, Handler};
 
 #[derive(Debug)]
 pub struct ConcurrencyLimit<H> {
@@ -25,10 +25,11 @@ impl<H> ConcurrencyLimit<H> {
 impl<H, Arg> Handler<Arg> for ConcurrencyLimit<H>
 where
     H: Handler<Arg>,
+    H::Ret: 'static,
 {
     type Ret = H::Ret;
 
-    fn handle(&mut self, arg: Arg, callback: impl Callback<Self::Ret>) {
+    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Self::Ret>) {
         {
             let (count, cvar) = self.inflight_count.as_ref();
             let mut count = count.lock().unwrap();
@@ -40,14 +41,17 @@ where
 
         let cloned = Arc::clone(&self.inflight_count);
 
-        self.inner.handle(arg, move |ret| {
-            let (count, cvar) = cloned.as_ref();
-            let mut count = count.lock().unwrap();
-            *count -= 1;
-            cvar.notify_one();
+        self.inner.handle(
+            arg,
+            callback_fn(move |ret| {
+                let (count, cvar) = cloned.as_ref();
+                let mut count = count.lock().unwrap();
+                *count -= 1;
+                cvar.notify_one();
 
-            callback.call(ret);
-        });
+                callback.call(ret);
+            }),
+        );
     }
 }
 

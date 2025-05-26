@@ -13,10 +13,12 @@ impl<T> OneshotCallback<T> {
     }
 }
 
-impl<T> Callback<T> for OneshotCallback<T>
+impl<T> Callback for OneshotCallback<T>
 where
     T: Send + 'static,
 {
+    type Ret = T;
+
     fn call(self, val: T) {
         let result = self.tx.send(val);
         if result.is_err() {

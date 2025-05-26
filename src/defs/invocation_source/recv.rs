@@ -2,7 +2,7 @@ use crate::defs::{Callback, Invocation};
 
 pub trait RecvInvocation<Arg, Ret, Cb>
 where
-    Cb: Callback<Output = Ret>,
+    Cb: Callback<Ret = Ret>,
 {
     type RecvErr: Error;
 
@@ -11,7 +11,7 @@ where
 
 pub trait TryRecvInvocation<Arg, Ret, Cb>
 where
-    Cb: Callback<Output = Ret>,
+    Cb: Callback<Ret = Ret>,
 {
     type TryRecvErr: Error;
 

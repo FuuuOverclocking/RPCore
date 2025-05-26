@@ -15,13 +15,40 @@ pub struct Invocation<Arg, Cb> {
 pub trait Handler<Arg> {
     type Ret;
 
-    fn handle(&mut self, arg: Arg, callback: impl Callback<Output = Self::Ret>);
+    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Self::Ret>);
 }
 
 pub trait Callback: Send + 'static {
-    type Output;
+    type Ret;
 
-    fn call(self, out: Self::Output);
+    fn call(self, out: Self::Ret);
+}
+
+pub struct FnCallback<F, Ret> {
+    f: F,
+    _phantom: PhantomData<fn(Ret)>,
+}
+
+impl<F, Ret> Callback for FnCallback<F, Ret>
+where
+    F: FnOnce(Ret) + Send + 'static,
+    Ret: 'static,
+{
+    type Ret = Ret;
+
+    fn call(self, out: Self::Ret) {
+        (self.f)(out);
+    }
+}
+
+pub fn callback_fn<F, Ret>(f: F) -> FnCallback<F, Ret>
+where
+    F: FnOnce(Ret) + Send + 'static,
+{
+    FnCallback {
+        f,
+        _phantom: Default::default(),
+    }
 }
 
 pub trait TryHandler<Arg>: Handler<Arg, Ret = Result<Self::Ok, Self::Err>> {
@@ -29,11 +56,6 @@ pub trait TryHandler<Arg>: Handler<Arg, Ret = Result<Self::Ok, Self::Err>> {
     type Err;
 
     fn handle(&mut self, arg: Arg, callback: impl TryCallback<Ok = Self::Ok, Err = Self::Err>);
-}
-
-pub trait TryCallback: Callback<Output = Result<Self::Ok, Self::Err>> {
-    type Ok;
-    type Err;
 }
 
 impl<H, Arg, Ok, Err> TryHandler<Arg> for H
@@ -48,37 +70,15 @@ where
     }
 }
 
+pub trait TryCallback: Callback<Ret = Result<Self::Ok, Self::Err>> {
+    type Ok;
+    type Err;
+}
+
 impl<Cb, Ok, Err> TryCallback for Cb
 where
-    Cb: Callback<Output = Result<Ok, Err>>,
+    Cb: Callback<Ret = Result<Ok, Err>>,
 {
     type Ok = Ok;
     type Err = Err;
-}
-
-struct FnCallback<F, Output> {
-    f: F,
-    _phantom: PhantomData<fn(Output)>,
-}
-
-impl<F, Output> Callback for FnCallback<F, Output>
-where
-    F: FnOnce(Output) + Send + 'static,
-    Output: 'static,
-{
-    type Output = Output;
-
-    fn call(self, out: Self::Output) {
-        (self.f)(out);
-    }
-}
-
-fn callback_fn<F, Output>(f: F) -> FnCallback<F, Output>
-where
-    F: FnOnce(Output) + Send + 'static,
-{
-    FnCallback {
-        f,
-        _phantom: Default::default(),
-    }
 }

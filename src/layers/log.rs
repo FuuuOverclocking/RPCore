@@ -3,7 +3,7 @@ use std::fmt;
 use std::time::Instant;
 
 use crate::defs::layer::Layer;
-use crate::defs::{Callback, Handler};
+use crate::defs::{callback_fn, Callback, Handler};
 
 #[derive(Debug)]
 pub struct Log<H> {
@@ -36,22 +36,22 @@ impl<H> Log<H> {
 impl<H, Arg> Handler<Arg> for Log<H>
 where
     H: Handler<Arg>,
+    H::Ret: fmt::Debug + 'static,
     Arg: fmt::Debug,
-    H::Ret: fmt::Debug,
 {
     type Ret = H::Ret;
 
-    fn handle(&mut self, arg: Arg, callback: impl Callback<Self::Ret>) {
+    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Self::Ret>) {
         let begin_at = Instant::now();
         let handler_name = self.handler_name.clone();
         let formatted_arg = format!("{arg:?}");
-        log::info!("{handler_name} started processing {formatted_arg}");
+        log::info!("[{handler_name}] started processing {formatted_arg}");
 
-        self.inner.handle(arg, move |ret| {
+        self.inner.handle(arg, callback_fn(move |ret| {
             let elapsed = begin_at.elapsed();
-            log::info!("{handler_name} completed processing {formatted_arg} in {elapsed:?}, result: {ret:?}");
+            log::info!("[{handler_name}] ({elapsed:?}) completed processing {formatted_arg}, result: {ret:?}");
             callback.call(ret);
-        });
+        }));
     }
 }
 

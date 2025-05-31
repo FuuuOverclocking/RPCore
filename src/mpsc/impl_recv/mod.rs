@@ -2,7 +2,7 @@ mod impl_recv_error;
 
 use std::sync::mpsc;
 
-use crate::defs::invocation_source::recv;
+use crate::core::invocation_source::recv;
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use crate::mpsc::RxWithEventFd;
 use crate::mpsc::{Invocation, OneshotCallback, Rx};

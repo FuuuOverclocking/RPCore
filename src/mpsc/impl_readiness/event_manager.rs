@@ -1,6 +1,6 @@
 use event_manager::{EventOps, EventSet, Events};
 
-use crate::defs::invocation_source::readiness;
+use crate::core::invocation_source::readiness;
 use crate::mpsc::RxWithEventFd;
 
 impl<Arg, Ret> readiness::EventSource<EventOps<'_>> for RxWithEventFd<Arg, Ret> {

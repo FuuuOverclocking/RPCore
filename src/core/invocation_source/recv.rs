@@ -1,4 +1,4 @@
-use crate::defs::{Callback, Invocation};
+use crate::core::{Callback, Invocation};
 
 pub trait RecvInvocation<Arg, Ret, Cb>
 where

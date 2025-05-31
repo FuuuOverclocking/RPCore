@@ -17,6 +17,6 @@ mod impl_recv;
 
 pub mod singleplex_server;
 
-use crate::defs;
+use crate::core;
 
-pub type Invocation<Arg, Ret> = defs::Invocation<Arg, OneshotCallback<Ret>>;
+pub type Invocation<Arg, Ret> = core::Invocation<Arg, OneshotCallback<Ret>>;

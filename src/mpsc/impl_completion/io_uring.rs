@@ -4,7 +4,7 @@ use std::os::fd::AsRawFd;
 use io_uring::types::Fd;
 use io_uring::{cqueue, opcode, squeue, SubmissionQueue, Submitter};
 
-use crate::defs::invocation_source::completion;
+use crate::core::invocation_source::completion;
 use crate::mpsc::RxWithEventFd;
 
 impl<'a, Arg, Ret> completion::Proactor<Submitter<'a>, SubmissionQueue<'a>, cqueue::Entry, u64>

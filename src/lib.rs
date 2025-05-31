@@ -1,6 +1,6 @@
 mod macros;
 
-pub mod defs;
+pub mod core;
 
 pub mod layers;
 

@@ -2,8 +2,8 @@ use std::any::type_name;
 use std::fmt;
 use std::time::Instant;
 
-use crate::defs::layer::Layer;
-use crate::defs::{callback_fn, Callback, Handler};
+use crate::core::layer::Layer;
+use crate::core::{callback_fn, Callback, Handler};
 
 #[derive(Debug)]
 pub struct Log<H> {

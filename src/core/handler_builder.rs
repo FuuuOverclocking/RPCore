@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::defs::layer::{layer_fn, Identity, Layer, LayerFn, Stack};
+use crate::core::layer::{layer_fn, Identity, Layer, LayerFn, Stack};
 
 #[derive(Clone)]
 pub struct HandlerBuilder<L> {

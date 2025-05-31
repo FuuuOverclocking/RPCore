@@ -1,6 +1,6 @@
 use std::sync::mpsc;
 
-use crate::defs::invocation_source::recv;
+use crate::core::invocation_source::recv;
 
 impl recv::Error for mpsc::RecvError {
     fn is_closed(&self) -> bool {

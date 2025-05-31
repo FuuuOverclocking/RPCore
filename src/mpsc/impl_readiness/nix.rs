@@ -1,6 +1,6 @@
 use nix::sys::epoll::{Epoll, EpollEvent, EpollFlags};
 
-use crate::defs::invocation_source::readiness;
+use crate::core::invocation_source::readiness;
 use crate::mpsc::RxWithEventFd;
 
 impl<Arg, Ret> readiness::EventSource<Epoll> for RxWithEventFd<Arg, Ret> {

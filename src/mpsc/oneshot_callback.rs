@@ -1,7 +1,7 @@
 use std::any::type_name;
 use std::fmt;
 
-use crate::defs::Callback;
+use crate::core::Callback;
 
 pub struct OneshotCallback<T> {
     tx: oneshot::Sender<T>,

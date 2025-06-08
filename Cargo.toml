@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["rpcore-core", "rpcore", "rpcore-mpsc"]
+members = ["rpcore-core", "rpcore", "rpcore-mpsc", "rpcore-stream"]
 
 [workspace.package]
 version = "0.2.0"

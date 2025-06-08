@@ -1,0 +1,10 @@
+[package]
+name = "rpcore-stream"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+rpcore-core = { path = "../rpcore-core" }
+
+[features]

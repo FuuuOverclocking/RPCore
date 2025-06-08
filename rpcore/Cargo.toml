@@ -1,0 +1,9 @@
+[package]
+name = "rpcore"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+rpcore-core = { path = "../rpcore-core" }
+log = { workspace = true, optional = true }

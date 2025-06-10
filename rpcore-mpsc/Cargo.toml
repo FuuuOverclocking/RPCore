@@ -16,5 +16,20 @@ nix = { workspace = true, optional = true }
 oneshot = { workspace = true }
 thiserror = { workspace = true, optional = true }
 
+[dev-dependencies]
+rpcore = { path = "../rpcore", features = ["log"] }
+
+rand = "0.9"
+simplelog = "0.12"
+
 [features]
+default = ["server"]
 server = ["dep:thiserror"]
+
+[[example]]
+name = "echo-server"
+path = "examples/echo-server.rs"
+
+[[example]]
+name = "identify-client"
+path = "examples/identify-client.rs"

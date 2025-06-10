@@ -1,4 +1,3 @@
-use std::result::Result as StdResult;
 use std::sync::mpsc;
 use std::time::Duration;
 
@@ -6,7 +5,7 @@ use rpcore_core::server::singleplex::Server;
 use rpcore_core::server::SyncTokenAllocator;
 use rpcore_core::Handler;
 
-use crate::mpsc_server::{Client, Error, MpscServer, Result, Settings, SyncClient};
+use crate::mpsc_server::{Error, MpscClient, MpscServer, MpscSyncClient, Result, Settings};
 use crate::{Invocation, Rx};
 
 pub struct Builder<B, Hooks = ()> {
@@ -20,7 +19,7 @@ pub struct Bounded {
     cap: usize,
 }
 
-impl<B, Hooks> Builder<B, Hooks> {
+impl Builder<Unbounded> {
     pub fn new() -> Builder<Unbounded> {
         Builder {
             settings: Settings {
@@ -30,7 +29,9 @@ impl<B, Hooks> Builder<B, Hooks> {
             bound: Unbounded,
         }
     }
+}
 
+impl Builder<Bounded> {
     pub fn new_bounded(cap: usize) -> Builder<Bounded> {
         Builder {
             settings: Settings {
@@ -40,7 +41,9 @@ impl<B, Hooks> Builder<B, Hooks> {
             bound: Bounded { cap },
         }
     }
+}
 
+impl<B, Hooks> Builder<B, Hooks> {
     pub fn polling(mut self, polling: Option<Duration>) -> Self {
         self.settings.polling = polling;
         self
@@ -63,10 +66,7 @@ impl<Hooks> Builder<Unbounded, Hooks> {
     pub fn build<H, Arg>(
         self,
         handler: H,
-    ) -> (
-        MpscServer<H, Arg, Hooks>,
-        ClientBuilder<Arg, StdResult<H::Ok, H::Err>>,
-    )
+    ) -> (MpscServer<H, Arg, Hooks>, ClientBuilder<Arg, H::Ret>)
     where
         H: Handler<Arg>,
     {
@@ -90,10 +90,7 @@ impl<Hooks> Builder<Bounded, Hooks> {
     pub fn build<H, Arg>(
         self,
         handler: H,
-    ) -> (
-        MpscServer<H, Arg, Hooks>,
-        SyncClientBuilder<Arg, StdResult<H::Ok, H::Err>>,
-    )
+    ) -> (MpscServer<H, Arg, Hooks>, SyncClientBuilder<Arg, H::Ret>)
     where
         H: Handler<Arg>,
     {
@@ -118,8 +115,8 @@ pub struct ClientBuilder<Arg, Ret> {
 }
 
 impl<Arg, Ret> ClientBuilder<Arg, Ret> {
-    pub fn build_client(&self) -> Result<Client<Arg, Ret>> {
-        Ok(Client {
+    pub fn build_client(&self) -> Result<MpscClient<Arg, Ret>> {
+        Ok(MpscClient {
             token: self.token_allocator.alloc().ok_or(Error::TooManyClients)?,
             tx: self.tx.clone(),
         })
@@ -132,8 +129,8 @@ pub struct SyncClientBuilder<Arg, Ret> {
 }
 
 impl<Arg, Ret> SyncClientBuilder<Arg, Ret> {
-    pub fn build_client(&self) -> Result<SyncClient<Arg, Ret>> {
-        Ok(SyncClient {
+    pub fn build_client(&self) -> Result<MpscSyncClient<Arg, Ret>> {
+        Ok(MpscSyncClient {
             token: self.token_allocator.alloc().ok_or(Error::TooManyClients)?,
             tx: self.tx.clone(),
         })

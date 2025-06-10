@@ -24,13 +24,11 @@ impl<H> ConcurrencyLimit<H> {
 impl<H, Arg> Handler<Arg> for ConcurrencyLimit<H>
 where
     H: Handler<Arg>,
-    H::Ok: 'static,
-    H::Err: 'static,
+    H::Ret: 'static,
 {
-    type Ok = H::Ok;
-    type Err = H::Err;
+    type Ret = H::Ret;
 
-    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Result<Self::Ok, Self::Err>>) {
+    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Self::Ret>) {
         {
             let (count, cvar) = self.inflight_count.as_ref();
             let mut count = count.lock().unwrap();

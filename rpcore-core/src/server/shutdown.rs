@@ -9,7 +9,7 @@ pub trait IsShuttingDown {
     fn is_shutting_down(&self) -> bool;
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct ShutdownBool {
     bool: Arc<AtomicBool>,
 }

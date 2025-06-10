@@ -41,10 +41,9 @@ impl<I, H, S, Arg> Handler<Arg> for Server<I, H, S>
 where
     H: Handler<Arg>,
 {
-    type Ok = H::Ok;
-    type Err = H::Err;
+    type Ret = H::Ret;
 
-    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Result<Self::Ok, Self::Err>>) {
+    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Self::Ret>) {
         self.handler.handle(arg, callback)
     }
 }
@@ -72,7 +71,7 @@ where
 impl<I, H, S, Arg, Cb> Serve<Arg, Cb> for Server<I, H, S>
 where
     I: RecvInvocation<Arg, Cb>,
-    Cb: Callback<Ret = Result<Self::Ok, Self::Err>>,
+    Cb: Callback<Ret = Self::Ret>,
     H: Handler<Arg>,
     S: HasHooks,
 {
@@ -81,7 +80,7 @@ where
 impl<I, H, S, Arg, Cb> ServeWithPolling<Arg, Cb> for Server<I, H, S>
 where
     I: TryRecvInvocation<Arg, Cb>,
-    Cb: Callback<Ret = Result<Self::Ok, Self::Err>>,
+    Cb: Callback<Ret = Self::Ret>,
     H: Handler<Arg>,
     S: HasHooks + HasPolling,
 {
@@ -89,7 +88,7 @@ where
 
 pub trait Serve<Arg, Cb>: RecvInvocation<Arg, Cb> + Handler<Arg> + HasHooks
 where
-    Cb: Callback<Ret = Result<Self::Ok, Self::Err>>,
+    Cb: Callback<Ret = Self::Ret>,
 {
     fn serve(&mut self, shutdown: &impl IsShuttingDown) {
         loop {
@@ -120,7 +119,7 @@ where
 pub trait ServeWithPolling<Arg, Cb>:
     TryRecvInvocation<Arg, Cb> + Handler<Arg> + HasPolling + HasHooks
 where
-    Cb: Callback<Ret = Result<Self::Ok, Self::Err>>,
+    Cb: Callback<Ret = Self::Ret>,
 {
     fn serve(&mut self, shutdown: &impl IsShuttingDown) {
         loop {

@@ -8,7 +8,7 @@ mod server;
 pub use server::MpscServer;
 
 mod client;
-pub use client::{Client, SyncClient};
+pub use client::{CallSettingToken, MpscClient, MpscSyncClient};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

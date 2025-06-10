@@ -9,10 +9,9 @@ pub mod layer;
 pub mod server;
 
 pub trait Handler<Arg> {
-    type Ok;
-    type Err;
+    type Ret;
 
-    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Result<Self::Ok, Self::Err>>);
+    fn handle(&mut self, arg: Arg, callback: impl Callback<Ret = Self::Ret>);
 }
 
 #[derive(Debug)]

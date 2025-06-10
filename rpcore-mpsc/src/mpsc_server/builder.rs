@@ -20,6 +20,7 @@ pub struct Bounded {
 }
 
 impl Builder<Unbounded> {
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Builder<Unbounded> {
         Builder {
             settings: Settings {
@@ -62,7 +63,6 @@ impl<B, Hooks> Builder<B, Hooks> {
 }
 
 impl<Hooks> Builder<Unbounded, Hooks> {
-    #[allow(clippy::complexity)]
     pub fn build<H, Arg>(
         self,
         handler: H,
@@ -86,7 +86,6 @@ impl<Hooks> Builder<Unbounded, Hooks> {
 }
 
 impl<Hooks> Builder<Bounded, Hooks> {
-    #[allow(clippy::complexity)]
     pub fn build<H, Arg>(
         self,
         handler: H,

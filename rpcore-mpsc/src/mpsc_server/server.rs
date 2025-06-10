@@ -9,7 +9,6 @@ pub struct MpscServer<H, Arg, Hooks>
 where
     H: Handler<Arg>,
 {
-    #[allow(clippy::complexity)]
     pub(crate) inner: Server<Rx<Arg, H::Ret>, H, Settings<Hooks>>,
 }
 

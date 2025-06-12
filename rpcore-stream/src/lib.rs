@@ -1,2 +1,2 @@
+pub mod codec;
 mod split;
-mod codec;

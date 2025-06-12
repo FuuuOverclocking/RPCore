@@ -7,4 +7,10 @@ edition.workspace = true
 [dependencies]
 rpcore-core = { path = "../rpcore-core" }
 
+bytes = "1"
+
 [features]
+
+[[example]]
+name = "my-protocol"
+path = "examples/my-protocol.rs"

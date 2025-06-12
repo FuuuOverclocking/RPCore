@@ -1,21 +1,30 @@
-use std::{error::Error, io::Write, os::fd::AsFd};
+use std::os::fd::{AsFd, OwnedFd};
+
+use bytes::Buf;
 
 pub trait Encode {
-    fn encode<C>(&self, encoder: C) -> Result<C::Ok, C::Error>
-    where
-        C: Encoder;
+    fn encode<C: Encoder>(self, encoder: C);
 }
 
-pub trait Encoder: Sized + Write {
-    type Ok;
-    type Error: Error;
+pub trait Encoder: Sized {
+    fn write_bytes(&mut self, bytes: impl Buf);
 
-    fn write_bytes(&mut self, bytes: &[u8]) -> Result<Self::Ok, Self::Error>;
-    fn write_bytes_of_fd(
-        &mut self,
-        fd: impl AsFd,
-        offset: usize,
-        count: usize,
-    ) -> Result<Self::Ok, Self::Error>;
-    fn 
+    /// Underlying uses sendfile().
+    fn write_zcopy_from_fd(&mut self, fd: impl AsFd, offset: usize, count: usize);
+
+    /// Underlying uses SCM_RIGHT, Unix socket only.
+    fn write_fds(&mut self, fds: impl IntoIterator<Item = OwnedFd>);
+
+    fn finish(self);
+}
+
+pub trait Decode<'de>: Sized {
+    fn decode<D>(decoder: D) -> Result<Option<Self>, D::Error>
+    where
+        D: Decoder<'de>;
+}
+
+pub trait Decoder<'de>: Buf {
+    type Error;
+
 }

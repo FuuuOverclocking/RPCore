@@ -6,7 +6,7 @@ pub trait RecvInvocation<Arg, Cb> {
     fn recv(&mut self) -> Result<Invocation<Arg, Cb>, Self::RecvErr>;
 }
 
-pub trait TryRecvInvocation<Arg, Cb> {
+pub trait TryRecvInvocation<Arg, Cb>: RecvInvocation<Arg, Cb> {
     type TryRecvErr: Error;
 
     fn try_recv(&mut self) -> Result<Invocation<Arg, Cb>, Self::TryRecvErr>;

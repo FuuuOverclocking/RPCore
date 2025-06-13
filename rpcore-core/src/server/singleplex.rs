@@ -99,7 +99,6 @@ where
 
             let inv = match self.recv() {
                 Ok(inv) => inv,
-                Err(e) if e.is_empty() => continue,
                 Err(e) if e.is_closed() => {
                     self.hooks().on_error(&e);
                     self.hooks().on_shutdown();
@@ -128,9 +127,8 @@ where
                 return;
             }
 
-            let inv = match self.try_recv() {
+            let inv = match self.recv() {
                 Ok(inv) => inv,
-                Err(e) if e.is_empty() => continue,
                 Err(e) if e.is_closed() => {
                     self.hooks().on_error(&e);
                     self.hooks().on_shutdown();

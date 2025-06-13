@@ -1,4 +1,4 @@
-use rpcore_core::server::singleplex::{Serve, ServeWithPolling, Server};
+use rpcore_core::server::singleplex::{ServeWithPolling, Server};
 use rpcore_core::server::IsShuttingDown;
 use rpcore_core::Handler;
 
@@ -19,10 +19,6 @@ where
     Hooks: rpcore_core::server::Hooks,
 {
     pub fn serve(&mut self, shutdown: &impl IsShuttingDown) {
-        Serve::serve(&mut self.inner, shutdown);
-    }
-
-    pub fn serve_with_polling(&mut self, shutdown: &impl IsShuttingDown) {
         ServeWithPolling::serve(&mut self.inner, shutdown);
     }
 }

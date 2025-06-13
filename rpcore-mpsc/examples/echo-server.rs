@@ -51,7 +51,7 @@ fn main() {
     client_random_calling(c2);
     shutdown_after_3s(shutdown.clone());
 
-    server.serve_with_polling(&shutdown);
+    server.serve(&shutdown);
 }
 
 fn client_random_calling(client: MpscClient<String, String>) {

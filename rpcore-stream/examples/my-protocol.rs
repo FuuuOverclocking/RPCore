@@ -25,7 +25,7 @@ struct Header {
 
 impl Header {
     const SIZE: usize = size_of::<Self>();
-    const MAGIC: [u8; 4] = *b" rpc";
+    const MAGIC: [u8; 4] = *b"\0rpc";
 }
 
 impl Encode for Message {

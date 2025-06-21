@@ -240,6 +240,7 @@ name = "rpcore-stream"
 version = "0.2.0"
 dependencies = [
  "bytes",
+ "libc",
  "rpcore-core",
  "socket2",
 ]

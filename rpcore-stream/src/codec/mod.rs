@@ -1,3 +1,5 @@
+mod extended_io;
+
 use std::os::fd::{AsFd, OwnedFd};
 
 use bytes::{Buf, Bytes};
@@ -11,7 +13,7 @@ pub trait Encode {
 /// A trait for encoding data, including bytes and file descriptors, into a stream.
 pub trait Encoder: Sized {
     /// Writes a buffer of bytes to the stream.
-    fn write_bytes(&mut self, bytes: impl Buf);
+    fn write_bytes<B: Buf>(&mut self, bytes: B);
 
     /// Writes `count` bytes from `fd` at `offset` using a zero-copy mechanism.
     ///

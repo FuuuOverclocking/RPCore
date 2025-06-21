@@ -45,9 +45,11 @@ pub trait Write: io::Write {
         bufs: &[IoSlice<'_>],
         fds: &[RawFd],
     ) -> io::Result<usize> {
-        // The default implementation asserts that no file descriptors are being
-        // sent and then calls `write_vectored`.
-        assert!(fds.is_empty(), "Sending fd is not supported");
+        // The default implementation simply calls 'write_vectored', and reports
+        // unsupported when the user attempts to send fds.
+        if !fds.is_empty() {
+            return Err(io::Error::from_raw_os_error(libc::EOPNOTSUPP));
+        }
         self.write_vectored(bufs)
     }
 }

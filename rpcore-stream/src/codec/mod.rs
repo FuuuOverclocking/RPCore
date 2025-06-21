@@ -1,4 +1,4 @@
-mod extended_io;
+pub mod extended_io;
 
 use std::os::fd::{AsFd, OwnedFd};
 

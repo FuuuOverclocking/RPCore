@@ -1,5 +1,3 @@
-pub mod extended_io;
-
 use std::os::fd::{AsFd, OwnedFd};
 
 use bytes::{Buf, Bytes};

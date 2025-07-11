@@ -1,4 +1,6 @@
+pub mod buf;
 pub mod codec;
 pub mod extended_io;
-mod split;
-pub mod buf;
+
+pub mod split;
+pub use split::split;

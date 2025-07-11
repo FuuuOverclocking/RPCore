@@ -1,8 +1,7 @@
 use std::cell::RefCell;
 use std::io::{self, IoSlice, IoSliceMut};
 use std::os::fd::{AsRawFd, FromRawFd, OwnedFd, RawFd};
-use std::ptr;
-use std::{mem, slice};
+use std::{mem, ptr, slice};
 
 use libc::{self, ssize_t};
 
